@@ -1,0 +1,36 @@
+router.get('/', function(req, res) {
+  // Retrieve the desired count for each category (for example, through a query parameter) defaulting to some number as needed.
+  var limit = req.query.limit || 100;
+
+  // Create an object to hold the results
+  var result = {};
+  // Get data for the world wide category
+  MainArticle.find({
+      category: ['SFW']
+    })
+    .limit(100)
+    .exec(function(err,SFW) {
+      if (err) {
+        console.log(err);
+      } else {
+        // Add the worldwide data to the result set
+        result.worldwideArticles = worldwideArticles;
+        // Get data for the US news category
+        MainArticle.find({
+            category: ['NSFW']
+          })
+          .limit(100)
+          .exec(function(err, NSFW) {
+            if (err) {
+              console.log(err);
+            } else {
+              result.NSFW = NSFW;
+              // Hand the two different sets separately to the template
+              // You will obviously have to change the template code to handle the new data structure of different categories
+              res.render('landing', result);
+
+            }
+          });
+      }
+    });
+});
